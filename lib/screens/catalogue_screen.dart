@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hava_havai_hiring_challenge/screens/cart_screen.dart';
 import '../providers/product_provider.dart';
+import '../providers/cart_provider.dart';
 
 class CatalogueScreen extends ConsumerStatefulWidget {
   const CatalogueScreen({super.key});
@@ -34,9 +36,52 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
   @override
   Widget build(BuildContext context) {
     final productAsyncValue = ref.watch(productProvider);
+    final cartItemCount = ref.watch(cartProvider).itemCount;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Products")),
+      appBar: AppBar(
+        title: const Text("Catalogue"), 
+        centerTitle: true,
+        actions: [
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart_outlined),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const CartScreen()
+                  ));
+                },
+              ),
+              if (cartItemCount > 0)
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '$cartItemCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
       body: productAsyncValue.when(
         data: (products) => _buildProductGrid(products, productAsyncValue.isLoading),
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -90,7 +135,23 @@ class _CatalogueScreenState extends ConsumerState<CatalogueScreen> {
                   bottom: 8,
                   right: 8,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      ref.read(cartProvider.notifier).addProduct(product);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${product.name} added to cart'),
+                          duration: const Duration(seconds: 2),
+                          action: SnackBarAction(
+                            label: 'VIEW CART',
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const CartScreen()
+                              ));
+                            },
+                          ),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.pink,
                       padding: const EdgeInsets.symmetric(horizontal: 30),

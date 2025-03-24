@@ -12,6 +12,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return  ProviderScope(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData().copyWith(
           appBarTheme: AppBarTheme(
             backgroundColor: Colors.pink[50],
