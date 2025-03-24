@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hava_havai_hiring_challenge/screens/catalogue_screen.dart';
 
 void main(){
   runApp(Home());
@@ -8,6 +10,15 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return  ProviderScope(
+      child: MaterialApp(
+        theme: ThemeData().copyWith(
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.pink[50],
+          ),
+        ),
+        home: CatalogueScreen()
+      ),
+    );
   }
 }
